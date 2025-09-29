@@ -3,6 +3,43 @@
 
 <head>
     <style>
+        /* Mobile improvements for reviews carousel */
+        @media (max-width: 768px) {
+            .reviews-carousel {
+                gap: 12px;
+                padding: 10px 0;
+            }
+            .review-card {
+                min-width: 210px;
+                padding: 16px 10px;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px #0002;
+            }
+            .review-stars {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+            .review-text {
+                font-size: 0.95rem;
+                margin-bottom: 10px;
+            }
+            .review-author {
+                font-size: 0.95rem;
+            }
+        }
+        /* Mobile fix for side-stats image */
+        @media (max-width: 768px) {
+            #side-stats .split img {
+                width: 100%;
+                max-width: 340px;
+                height: auto;
+                display: block;
+                margin: 0 auto 18px auto;
+                object-fit: contain;
+                border-radius: 18px;
+                box-shadow: 0 4px 18px #0002;
+            }
+        }
         /* Mobile fixes for about sections */
         @media (max-width: 768px) {
             .about-img, .about2-img {
@@ -928,7 +965,7 @@
         // Improved auto-scroll reviews carousel (desktop & mobile)
         const carousel = document.getElementById('reviewsCarousel');
         let autoScrollInterval = null;
-        let scrollSpeed = 1; // px per frame
+        let scrollSpeed = window.innerWidth <= 768 ? 0.5 : 1.2; // slower on mobile
 
         function startAutoScroll() {
             if (autoScrollInterval) return;
@@ -938,7 +975,7 @@
                 if (carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth) {
                     carousel.scrollLeft = 0;
                 }
-            }, 20); // smoother, faster frame rate
+            }, 16); // smoother frame rate
         }
 
         function stopAutoScroll() {

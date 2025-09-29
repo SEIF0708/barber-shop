@@ -141,7 +141,7 @@
 
         /* Hero Section */
         .hero.fixed-bg {
-            min-height: 100vh;
+            min-height: calc(100vh + 40px);
             background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
                         url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1920&h=1080&fit=crop') center/cover no-repeat;
             background-attachment: fixed;
@@ -639,7 +639,15 @@
 
             <section id="about" class="animate-in" style="background:#f5f5f5;color:#333;">
                 <div class="container split">
-                    <img src="barber.jpg" alt="Ahmed, Owner and Master Barber">
+                    <img src="barber.jpg" alt="Ahmed, Owner and Master Barber" class="about-img">
+        <style>
+            /* Responsive about image for mobile/desktop */
+            @media (max-width: 768px) {
+                .about-img {
+                    content: url('barbere1.jpg');
+                }
+            }
+        </style>
                     <div>
                         <h2 class="section-title animate-text" style="color:#333;">Meet Ahmed - Owner & Master Barber</h2>
                         <p class="lead animate-text" style="color:#666;">Ahmed is the proud owner and master barber of our shop. With over a decade of experience, he is dedicated to providing every client with exceptional service, skill, and a welcoming atmosphere that makes you feel at home.</p>
@@ -649,7 +657,14 @@
 
             <section id="about2" class="animate-in" style="background-color:#222;">
                 <div class="container split" style="flex-direction:row-reverse;">
-                    <img src="barber3.jpg" alt="Samir, Skilled Barber">
+                    <img src="barber3.jpg" alt="Samir, Skilled Barber" class="about2-img">
+        <style>
+            @media (max-width: 768px) {
+                .about2-img {
+                    content: url('barbere3.jpg');
+                }
+            }
+        </style>
                     <div>
                         <h2 class="section-title animate-text">Meet Samir - Skilled Barber & Artist</h2>
                         <p class="lead animate-text">Samir is Ahmed's trusted friend and a talented barber at our shop. With years of experience and a passion for his craft, Samir brings creativity and precision to every haircut, ensuring every client leaves looking their absolute best.</p>
@@ -886,35 +901,39 @@
             observer.observe(el);
         });
 
-        // Auto-scroll reviews carousel
+        // Improved auto-scroll reviews carousel (desktop & mobile)
         const carousel = document.getElementById('reviewsCarousel');
-        let scrollAmount = 0;
-        
-        function autoScroll() {
-            if (carousel) {
-                scrollAmount += 1;
-                carousel.scrollLeft = scrollAmount;
-                
-                if (scrollAmount >= carousel.scrollWidth - carousel.clientWidth) {
-                    scrollAmount = 0;
+        let autoScrollInterval = null;
+        let scrollSpeed = 1; // px per frame
+
+        function startAutoScroll() {
+            if (autoScrollInterval) return;
+            autoScrollInterval = setInterval(() => {
+                if (!carousel) return;
+                carousel.scrollLeft += scrollSpeed;
+                if (carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth) {
+                    carousel.scrollLeft = 0;
                 }
+            }, 20); // smoother, faster frame rate
+        }
+
+        function stopAutoScroll() {
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = null;
             }
         }
 
-        // Auto scroll every 30ms for smooth movement
-        setInterval(autoScroll, 30);
-
-        // Pause auto-scroll on hover
+        // Desktop: pause on mouse hover
         if (carousel) {
-            let autoScrollInterval = setInterval(autoScroll, 30);
-            
-            carousel.addEventListener('mouseenter', () => {
-                clearInterval(autoScrollInterval);
-            });
-            
-            carousel.addEventListener('mouseleave', () => {
-                autoScrollInterval = setInterval(autoScroll, 30);
-            });
+            carousel.addEventListener('mouseenter', stopAutoScroll);
+            carousel.addEventListener('mouseleave', startAutoScroll);
+
+            // Mobile: pause on touch
+            carousel.addEventListener('touchstart', stopAutoScroll, {passive:true});
+            carousel.addEventListener('touchend', startAutoScroll, {passive:true});
+
+            startAutoScroll();
         }
     </script>
 </body>

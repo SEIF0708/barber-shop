@@ -3,6 +3,27 @@
 
 <head>
     <style>
+        /* Mobile fixes for about sections */
+        @media (max-width: 768px) {
+            .about-img, .about2-img {
+                width: 100%;
+                max-width: 340px;
+                height: auto;
+                display: block;
+                margin: 0 auto 18px auto;
+                object-fit: contain;
+                border-radius: 18px;
+                box-shadow: 0 4px 18px #0002;
+            }
+            #about2 .split {
+                flex-direction: column !important;
+            }
+            #about2 .split > div {
+                width: 100%;
+                text-align: center;
+                margin-top: 0;
+            }
+        }
     .animate-in {
         opacity: 0;
         transform: translateY(40px);

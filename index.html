@@ -3,6 +3,22 @@
 
 <head>
     <style>
+        /* Mobile carousel: show one review at a time */
+        @media (max-width: 768px) {
+            .reviews-carousel {
+                gap: 0;
+                padding: 0;
+                scroll-snap-type: x mandatory;
+            }
+            .review-card {
+                min-width: 100vw;
+                max-width: 100vw;
+                scroll-snap-align: center;
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+        }
         /* Mobile improvements for reviews carousel */
         @media (max-width: 768px) {
             .reviews-carousel {
@@ -962,20 +978,37 @@
             observer.observe(el);
         });
 
-        // Improved auto-scroll reviews carousel (desktop & mobile)
+        // Improved auto-scroll reviews carousel
         const carousel = document.getElementById('reviewsCarousel');
         let autoScrollInterval = null;
-        let scrollSpeed = window.innerWidth <= 768 ? 0.5 : 1.2; // slower on mobile
+
+        function slideToNextReview() {
+            if (!carousel) return;
+            const cards = carousel.querySelectorAll('.review-card');
+            const cardWidth = cards[0].offsetWidth;
+            let currentIndex = Math.round(carousel.scrollLeft / cardWidth);
+            let nextIndex = currentIndex + 1;
+            if (nextIndex >= cards.length) nextIndex = 0;
+            carousel.scrollTo({
+                left: nextIndex * cardWidth,
+                behavior: 'smooth'
+            });
+        }
 
         function startAutoScroll() {
             if (autoScrollInterval) return;
-            autoScrollInterval = setInterval(() => {
-                if (!carousel) return;
-                carousel.scrollLeft += scrollSpeed;
-                if (carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth) {
-                    carousel.scrollLeft = 0;
-                }
-            }, 16); // smoother frame rate
+            if (window.innerWidth > 768) {
+                // Desktop: pixel scroll as before
+                autoScrollInterval = setInterval(() => {
+                    carousel.scrollLeft += 1.2;
+                    if (carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth) {
+                        carousel.scrollLeft = 0;
+                    }
+                }, 16);
+            } else {
+                // Mobile: snap to next card every 2.5s
+                autoScrollInterval = setInterval(slideToNextReview, 2500);
+            }
         }
 
         function stopAutoScroll() {
@@ -985,15 +1018,11 @@
             }
         }
 
-        // Desktop: pause on mouse hover
         if (carousel) {
             carousel.addEventListener('mouseenter', stopAutoScroll);
             carousel.addEventListener('mouseleave', startAutoScroll);
-
-            // Mobile: pause on touch
             carousel.addEventListener('touchstart', stopAutoScroll, {passive:true});
             carousel.addEventListener('touchend', startAutoScroll, {passive:true});
-
             startAutoScroll();
         }
     </script>
